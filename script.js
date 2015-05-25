@@ -1,21 +1,19 @@
 
 
 
+var Dice = Backbone.Collection.extend({
+	model: Die 
+});
 
-var die = {
-	sides: ["shot!","brains","shot!","feet","shot!","feet"],
-	roll: function(){
-		var result = this.sides[Math.floor((Math.random() * 6))];
+
+var Die = Backbone.Model.extend({
+		roll: function(){
+		var result = Math.floor((Math.random() * 6));
 		return result;
 	} 
-};
-
-$(document).ready(function(){
-	$("#diceroll").click(function(){
-		var result = die.roll();
-		$(this).html(result);
-	});
 });
+
+console.log(die.roll());
 
 
 
