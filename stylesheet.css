@@ -1,0 +1,22 @@
+
+
+
+#dice_visual {
+	position:	relative;
+	background-color:	black;
+	height: 150px;
+	width:	150px;
+	border:	none;
+		border-radius: 10px;
+}
+
+/* cheated the living hell out of this part - straight up copy-paste off the internet */
+#dice_face {
+	color: #FFFFFF;
+	font-size:	30px;
+	position: absolute;
+    top: 50%;
+    left: 50%;
+    margin-right: -50%;
+    transform: translate(-50%, -50%)
+}
