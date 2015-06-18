@@ -3,18 +3,19 @@
   <head>
     <title>title</title>
     <link rel="stylesheet" type="text/css" href="stylesheet.css">
-    <script src="jquery.js"></script>
-    <script src="underscore.js"></script>
-    <script src="backbone.js"></script>
-    <script src="script.js"></script>
   </head>
   <body>
     <div>
     	<button id="dice_roll" >Roll</button>
     </div>
 
-    <div id = "dice_visual">
-    	<span id="dice_face">Blank</span>
-    </div>
+    <script type="text/template" id="dieTemplate">
+    	<span class="die_face" style="color: <%= color %>;"><%= value %></span>
+    </script>
+
+    <script src="jquery.js"></script>
+    <script src="underscore.js"></script>
+    <script src="backbone.js"></script>
+    <script src="script.js"></script>
   </body>
 </html>
