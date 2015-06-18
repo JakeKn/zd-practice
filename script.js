@@ -46,7 +46,20 @@ var Die = Backbone.Model.extend({
 // ------------------------------
 
 var Shaker = Backbone.Collection.extend({
-	model: Die 
+	model: Die,
+
+	pickdice: function(inhand){
+		for (var i = 0; i < (3-inhand); i++){
+			var rando = this.at(Math.floor((Math.random() * this.length)));
+			console.log(rando.toJSON());
+		}
+
+		//this successfully picks random models from the collection.
+		//the idea is to pass in how many dice are currently in hand, and it 
+		//pulls random dice to get your total to 3 before rolling
+		//TODO:   move them to a hand collection.
+
+	}
 });
 
 
