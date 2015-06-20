@@ -48,17 +48,34 @@ var Die = Backbone.Model.extend({
 var Shaker = Backbone.Collection.extend({
 	model: Die,
 
-	pickdice: function(inhand){
-		for (var i = 0; i < (3-inhand); i++){
+	pickDice: function(needed){
+		var picked = [];
+		for (var i = 0; i < needed; i++){
 			var rando = this.at(Math.floor((Math.random() * this.length)));
-			console.log(rando.toJSON());
+			picked.push(this.remove(rando));
 		}
+		return picked;
 
 		//this successfully picks random models from the collection.
 		//the idea is to pass in how many dice are currently in hand, and it 
 		//pulls random dice to get your total to 3 before rolling
 		//TODO:   move them to a hand collection.
 
+	}
+});
+
+var Hand = Backbone.Collection.extend({
+	model: Die,
+
+	initialize: function(models, options){
+		this.shaker = options.shaker;
+	},
+
+	getDice: function(){
+		var needed =3-this.length;
+		var picked = this.shaker.pickDice(needed);
+		this.add(picked);
+		console.log(picked);		
 	}
 });
 
@@ -101,7 +118,11 @@ $(document).ready(function(){
 		DIE_ATTRS.green
 	]);
 
+	var hand = new Hand([],{shaker: shaker});
+	hand.add(die);
+
 	window.shaker = shaker;
+	window.hand = hand;
 
 	$('body').append(view.el);
 
