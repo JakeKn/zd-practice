@@ -56,11 +56,6 @@ var Shaker = Backbone.Collection.extend({
 		}
 		return picked;
 
-		//this successfully picks random models from the collection.
-		//the idea is to pass in how many dice are currently in hand, and it 
-		//pulls random dice to get your total to 3 before rolling
-		//TODO:   move them to a hand collection.
-
 	}
 });
 
@@ -69,6 +64,7 @@ var Hand = Backbone.Collection.extend({
 
 	initialize: function(models, options){
 		this.shaker = options.shaker;
+		this.table = options.table;
 	},
 
 	getDice: function(){
@@ -76,6 +72,17 @@ var Hand = Backbone.Collection.extend({
 		var picked = this.shaker.pickDice(needed);
 		this.add(picked);
 		console.log(picked);		
+	}
+});
+
+var Table = Backbone.Collection.extend({
+	model: Die,
+
+
+	//   MAY NOT NEED THIS   
+	
+	initialize: function(models, options){
+		this.hand = options.hand;
 	}
 });
 
@@ -118,11 +125,14 @@ $(document).ready(function(){
 		DIE_ATTRS.green
 	]);
 
-	var hand = new Hand([],{shaker: shaker});
+	var hand = new Hand([],{shaker: shaker, table: table});
 	hand.add(die);
+
+	var table = new Table([],{hand: hand});
 
 	window.shaker = shaker;
 	window.hand = hand;
+	window.table = table;
 
 	$('body').append(view.el);
 
@@ -133,12 +143,8 @@ $(document).ready(function(){
 });
 
 
-// How do we pull one die off the shaker?
-// How do we pull `n` dice off the shaker?
-// How do move them into a new collection?
 // How does that "hand" collection roll those dice?
 // How does the hand collection show those on screen?
-
 // Third collection for "table" where we store dice we are keeping score with
 
 
