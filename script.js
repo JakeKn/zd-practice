@@ -68,6 +68,9 @@ var Hand = Backbone.Collection.extend({
 	},
 
 	getDice: function(){
+		this.each(function(die){
+			die.set({value: null});
+		});
 		var needed =3-this.length;
 		var picked = this.shaker.pickDice(needed);
 		this.add(picked);
@@ -81,7 +84,15 @@ var Hand = Backbone.Collection.extend({
 			die.roll();
 			console.log(die.get("value"));
 		});
+		this.score();
 
+	},
+
+	score: function(){
+		var brains = this.where({value: "brains"});
+		var shots = this.where({value: "shot"});
+		this.table.add(this.remove(brains));
+		this.table.add(this.remove(shots));
 	}
 
 });
