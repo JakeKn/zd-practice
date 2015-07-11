@@ -72,7 +72,18 @@ var Hand = Backbone.Collection.extend({
 		var picked = this.shaker.pickDice(needed);
 		this.add(picked);
 		console.log(picked);		
+
+
+	},
+
+	rollDice: function(){
+		this.each(function(die){
+			die.roll();
+			console.log(die.get("value"));
+		});
+
 	}
+
 });
 
 var Table = Backbone.Collection.extend({
@@ -80,7 +91,7 @@ var Table = Backbone.Collection.extend({
 
 
 	//   MAY NOT NEED THIS   
-	
+
 	initialize: function(models, options){
 		this.hand = options.hand;
 	}
@@ -124,11 +135,8 @@ $(document).ready(function(){
 		DIE_ATTRS.green,
 		DIE_ATTRS.green
 	]);
-
-	var hand = new Hand([],{shaker: shaker, table: table});
-	hand.add(die);
-
 	var table = new Table([],{hand: hand});
+	var hand = new Hand([],{shaker: shaker, table: table});	
 
 	window.shaker = shaker;
 	window.hand = hand;
