@@ -113,6 +113,19 @@ var Table = Backbone.Collection.extend({
 // VIEWS
 // ------------------------------
 
+var AppView = Backbone.View.extend({
+	className: 'app',
+	template: _.template($('#appTemplate').html()),
+	render: function(){
+		this.$el.html(this.template());
+	},
+	initialize: function(stuff, options){
+		this.shaker = options.shaker;
+		this.hand = options.hand;
+		this.table= options.table;
+	}
+});
+
 var DieView = Backbone.View.extend({
 	className: 'die', 
 	template: _.template($('#dieTemplate').html()),
@@ -128,9 +141,7 @@ var DieView = Backbone.View.extend({
 // ------------------------------
 
 $(document).ready(function(){
-	var die = new Die(DIE_ATTRS.yellow);
-	var view = new DieView({ model: die });
-
+	
 	var shaker = new Shaker([
 		DIE_ATTRS.red,
 		DIE_ATTRS.red,
@@ -148,12 +159,16 @@ $(document).ready(function(){
 	]);
 	var table = new Table([],{hand: hand});
 	var hand = new Hand([],{shaker: shaker, table: table});	
+	var app = new AppView([],{shaker: shaker, table: table, hand:hand});
+
+
 
 	window.shaker = shaker;
 	window.hand = hand;
 	window.table = table;
+	window.app=app;
 
-	$('body').append(view.el);
+	$('body').append(app.el);
 
 	$("#dice_roll").click(function(){
 		die.roll();
@@ -162,9 +177,8 @@ $(document).ready(function(){
 });
 
 
-// How does that "hand" collection roll those dice?
 // How does the hand collection show those on screen?
-// Third collection for "table" where we store dice we are keeping score with
+
 
 
 
