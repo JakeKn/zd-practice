@@ -50,6 +50,9 @@ var Shaker = Backbone.Collection.extend({
 
 	pickDice: function(needed){
 		var picked = [];
+
+		needed = Math.min(needed, this.length);
+
 		for (var i = 0; i < needed; i++){
 			var rando = this.at(Math.floor((Math.random() * this.length)));
 			picked.push(this.remove(rando));
@@ -68,6 +71,7 @@ var Hand = Backbone.Collection.extend({
 	},
 
 	getDice: function(){
+		this.moveToTable();
 		this.each(function(die){
 			die.set({value: null});
 		});
@@ -76,7 +80,7 @@ var Hand = Backbone.Collection.extend({
 		this.add(picked);
 		console.log(picked);		
 
-
+		return this;
 	},
 
 	rollDice: function(){
@@ -84,27 +88,31 @@ var Hand = Backbone.Collection.extend({
 			die.roll();
 			console.log(die.get("value"));
 		});
-		this.score();
-
+		return this;
 	},
 
-	score: function(){
+	moveToTable: function(){
 		var brains = this.where({value: "brains"});
 		var shots = this.where({value: "shot"});
 		this.table.add(this.remove(brains));
 		this.table.add(this.remove(shots));
+		this.table.score();
 	}
 
 });
 
 var Table = Backbone.Collection.extend({
-	model: Die,
-
-
-	//   MAY NOT NEED THIS   
-
+	
 	initialize: function(models, options){
 		this.hand = options.hand;
+	},
+
+	score: function(){
+		var brains = this.where({value: "brains"}).length;
+		var shots = this.where({value: "shot"}).length;
+		var score = "Brains: " + brains + " Shots: " + shots;
+		console.log(score);
+		$('#scoreboard').html(score);
 	}
 });
 
@@ -113,16 +121,25 @@ var Table = Backbone.Collection.extend({
 // VIEWS
 // ------------------------------
 
-var AppView = Backbone.View.extend({
-	className: 'app',
-	template: _.template($('#appTemplate').html()),
-	render: function(){
-		this.$el.html(this.template());
-	},
-	initialize: function(stuff, options){
+var HandView = Backbone.View.extend({
+	className: 'hand',
+	
+	initialize: function(options){
 		this.shaker = options.shaker;
 		this.hand = options.hand;
 		this.table= options.table;
+		this.listenTo(this.hand, 'add', this.createDieView);
+	},
+
+	render: function(){
+		this.$el.html();
+		return this;
+	}, 
+
+	createDieView: function(model){
+		var view = new DieView({ model: model });
+		view.render();
+		this.$el.append(view.el);
 	}
 });
 
@@ -132,7 +149,51 @@ var DieView = Backbone.View.extend({
 	render: function(){
 		var html = this.template(this.model.toJSON());
 		this.$el.html(html);
-	} 
+	},
+
+	initialize: function(options){
+		this.listenTo(this.model, 'change', this.render );
+		this.listenTo(this.model, 'remove', this.remove);
+	}
+});
+
+var ControlsView = Backbone.View.extend({
+
+	events: {
+		"click #start_turn": "startTurn",
+		"click #go_again": "goAgain",
+		"click #end_turn" : "endTurn",
+		"click #roll_dice": "rollDice"
+	},
+
+	initialize: function(options){
+		this.shaker = options.shaker;
+		this.hand = options.hand;
+		this.table= options.table;
+		this.handvis=options.handvis;
+		this.el = options.el;
+	},
+
+	startTurn: function(){
+		this.table.each(function(model){
+			this.shaker.add(this.table.remove(model));
+		});
+		this.hand.getDice();
+	},
+
+	goAgain: function(){
+		this.hand.getDice();
+		
+	},
+
+	rollDice: function(){
+		this.hand.rollDice();
+	}, 
+
+	endTurn: function(){
+		this.hand.moveToTable();
+	}
+
 });
 
 
@@ -159,25 +220,30 @@ $(document).ready(function(){
 	]);
 	var table = new Table([],{hand: hand});
 	var hand = new Hand([],{shaker: shaker, table: table});	
-	var app = new AppView([],{shaker: shaker, table: table, hand:hand});
+	var handvis= new HandView({shaker: shaker, table: table, hand: hand});
+	var controlsView = new ControlsView({
+		el: '#controls',
+		shaker: shaker,
+		table: table,
+		hand: hand,
+		handvis: handvis
+	});
+	window.controlsView = controlsView;
 
-
-
-	window.shaker = shaker;
+	/*window.shaker = shaker;
 	window.hand = hand;
 	window.table = table;
-	window.app=app;
+	window.handvis=handvis;*/
 
-	$('body').append(app.el);
+	$('body').append(handvis.el);
 
-	$("#dice_roll").click(function(){
+	/*$("#dice_roll").click(function(){
 		die.roll();
 		view.render();
-	});
+	});*/
 });
 
-
-// How does the hand collection show those on screen?
+// controlsView
 
 
 

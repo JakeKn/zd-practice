@@ -10,7 +10,7 @@
 		border-radius: 20px;
 }
 
-/* cheated the living hell out of this part - straight up copy-paste off the internet */
+
 .die_face {
 	color: #FFFFFF;
 	font-size:	30px;
@@ -21,16 +21,7 @@
     transform: translate(-50%, -50%)
 }
 
-.yellow_die{
-	background-color:	#FFD700;
+.hand {
+	
 }
-
-.green_die{
-	background-color:	green;
-}
-
-.red_die{
-	background-color:	red;
-}
-
 
